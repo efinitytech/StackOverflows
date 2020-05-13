@@ -8,6 +8,10 @@
     <Company>Efinity Technologies</Company>
     <description>A CLI for executing some code we found on Stack Overflow (or articles mentioned therein).</description>
     <RepositoryUrl>https://github.com/efinitytech/StackOverflows</RepositoryUrl>
+
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>so</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
