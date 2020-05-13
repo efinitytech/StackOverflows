@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "StackOverflow": {
+      "commandName": "Project",
+      "commandLineArgs": ".\\StackOverflow.exe -v 2 ResizeImage --file C:\\Users\\conno\\Downloads\\fourkay.jpg --width 384 --output newfile"
+    }
+  }
+}
