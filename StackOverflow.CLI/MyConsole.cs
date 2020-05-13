@@ -1,10 +1,15 @@
 ﻿using System;
+using System.CommandLine;
 
 namespace StackOverflow
 {
     internal class MyConsole
     {
         public static int Verbosity { get; set; } = 0;
+        public static Option GetVerbosityOption() => new Option("-v")
+        {
+            Argument = new Argument<int>("Verbosity")
+        };
 
         public static void Debug(string message)
         {

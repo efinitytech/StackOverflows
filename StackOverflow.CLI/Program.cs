@@ -1,7 +1,5 @@
-﻿using System;
-using System.CommandLine;
+﻿using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Drawing;
 using System.IO;
 using StackOverflow;
 
@@ -55,22 +53,22 @@ Defaults to 100.")
                 }
             };
             command.Handler = CommandHandler.Create((
-                FileInfo file, 
-                string output, 
-                int width, 
-                int height, 
+                FileInfo file,
+                string output,
+                int width,
+                int height,
                 long quality,
-                bool overwrite, 
+                bool overwrite,
                 int v) =>
             {
                 MyConsole.Verbosity = v;
                 MyConsole.Debug($"Verbosity set to {v}");
-                if(overwrite && output != default)
+                if (overwrite && output != default)
                 {
                     MyConsole.Error("Cannot use --overwrite with --output");
                     return;
                 }
-                if(quality == default)
+                if (quality == default)
                 {
                     quality = 100L;
                 }
