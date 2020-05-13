@@ -67,12 +67,13 @@ namespace ResizeImage
                         MyConsole.Debug($"Set height relative to new width: {height}");
                     }
 
-                    using Bitmap bitmap = Resize(image, width, height);
+                    using Bitmap bitmap = image.Resize(width, height);
 
                     MyConsole.Info($"Saving image.");
                     if (overwrite)
                     {
-                        output = file.FullName;
+                        MyConsole.Debug("Output to temporary file for overwrite later.");
+                        output = file.FullName.Replace(file.Name, "temp_" + DateTime.Now.Ticks);
                     }
                     else
                     {
@@ -83,6 +84,14 @@ namespace ResizeImage
                     MyConsole.Debug($"Computed output: {output}");
                     MyConsole.Debug($"Saving bitmap");
                     bitmap.SaveJPEG(output, quality);
+                }
+                if (overwrite)
+                {
+                    MyConsole.Debug("Delete old file to overwrite with new.");
+                    file.Delete();
+                    MyConsole.Debug("Rename temporary file to previous file's name.");
+                    File.Move(output, file.FullName);
+                    output = file.FullName;
                 }
                 MyConsole.Success($@"Wrote image to: {output}");
             }
@@ -97,7 +106,7 @@ namespace ResizeImage
                     throw;
                 }
             }
-            System.Console.WriteLine("Done.");
+            Console.WriteLine("Done.");
         }
 
         /// <summary>
@@ -131,7 +140,7 @@ namespace ResizeImage
         /// <param name="width">The width to resize to.</param>
         /// <param name="height">The height to resize to.</param>
         /// <returns>The resized image.</returns>
-        public static Bitmap Resize(Image image, int width, int height)
+        public static Bitmap Resize(this Image image, int width, int height)
         {
             MyConsole.Info($"Resizing image: {width}x{height}");
             MyConsole.Debug("Creating bitmap destination image.");
@@ -142,7 +151,7 @@ namespace ResizeImage
             MyConsole.Debug("Get graphics from image.");
             using (Graphics graphics = Graphics.FromImage(destImage))
             {
-                MyConsole.Debug(@"  - Setting up graphics modes:");
+                MyConsole.Debug(@"Setting up graphics modes:");
                 graphics.CompositingMode = CompositingMode.SourceCopy;
 
                 MyConsole.Debug("  - CompositingQuality: HighQuality");
@@ -161,9 +170,9 @@ namespace ResizeImage
                 using ImageAttributes wrapMode = new ImageAttributes();
                 wrapMode.SetWrapMode(WrapMode.TileFlipXY);
 
-                MyConsole.Debug("  - Drawing image...");
+                MyConsole.Debug("Drawing image...");
                 graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                MyConsole.Debug("Image drawn");
+                MyConsole.Debug("Image drawn.");
             }
 
             return destImage;
@@ -171,6 +180,9 @@ namespace ResizeImage
 
         /// <summary>
         /// Wrapper for saving a <see cref="Bitmap"/> as a JPEG file.
+        /// <para>
+        /// Source: https://docs.microsoft.com/en-us/dotnet/framework/winforms/advanced/how-to-set-jpeg-compression-level
+        /// </para>
         /// </summary>
         /// <param name="bitmap"></param>
         /// <param name="output"></param>
@@ -195,7 +207,6 @@ namespace ResizeImage
 
             MyConsole.Debug("  - Adding quality encoder.");
             myEncoderParameters.Param[0] = myEncoderParameter;
-
             MyConsole.Debug($"Saving bitmap to {output} with encoders.");
             bitmap.Save(output, jpgEncoder, myEncoderParameters);
         }
